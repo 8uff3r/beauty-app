@@ -1,0 +1,13 @@
+[package]
+name = "api"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = { version = "0.8.4" }
+serde = { version="1.0.219" ,features = ["derive"]}
+tokio = { version = "1.47.1", features = ["macros","rt-multi-thread"] }
+tracing-subscriber = { version = "0.3.20", features = ["serde"] }
+sqlx = { version = "0.8", features = [ "runtime-tokio","macros","derive","sqlite","uuid" ] }
+anyhow = "1.0.99"
+dotenvy = "0.15.7"
