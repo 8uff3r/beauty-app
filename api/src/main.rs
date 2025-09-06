@@ -29,7 +29,7 @@ async fn main() -> Result<()> {
         .map_err(|_| "DATABASE_URL environment variable not set")
         .unwrap();
     tracing_subscriber::fmt::init();
-    let pool = SqlitePool::connect(database_url.as_str()).await?;
+    let pool = setup_database(&database_url).await?;
     let state = Arc::new(AppState { db: pool });
 
     let app = Router::new()
@@ -37,7 +37,6 @@ async fn main() -> Result<()> {
         .route("/users", post(create_user))
         .with_state(state);
 
-    setup_database().await?;
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await?;
     axum::serve(listener, app).await?;
     Ok(())
@@ -81,10 +80,7 @@ struct User {
     user: String,
     email: String,
 }
-async fn setup_database() -> Result<SqlitePool> {
-    let database_url = env::var("DATABASE_URL")?;
-    let db_url = database_url.as_str();
-
+async fn setup_database(db_url: &str) -> Result<SqlitePool> {
     if !sqlx::Sqlite::database_exists(db_url).await.unwrap_or(false) {
         println!("Creating database {}", db_url);
         sqlx::Sqlite::create_database(db_url).await?;
