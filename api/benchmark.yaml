@@ -1,0 +1,9 @@
+concurrency: 2500
+base: 'http://127.0.0.1:3000'
+iterations: 50000
+rampup: 1
+
+plan:
+  - name: Fetch stores
+    request:
+      url: /stores
